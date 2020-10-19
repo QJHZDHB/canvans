@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>全嘉豪</title>
+    <style type="text/css">
+        #flag{
+            margin-top: 30px;
+            margin-left: 100px;
+        }
+
+#zg{
+          
+           font-size: 40pt;
+            margin-left: 100px;
+            background-image: 
+	-webkit-gradient( linear, left top, right top, color-stop(0, #f22), 
+	color-stop(0.15, #f2f), 
+	color-stop(0.3, #22f), 
+	color-stop(0.45, #2ff), 
+	color-stop(0.6, #2f2),
+	color-stop(0.75, #2f2), 
+	color-stop(0.9, #ff2), 
+	color-stop(1, #f22) );
+	color: transparent;
+	-webkit-background-clip: text;
+	-moz-background-clip: text;
+	-ms-background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas id='flag' width="560" height="490"></canvas>
+
+       
+                <div id="zg">中国加油,世界加油！！！</div>
+           
+    
+    </div>
+    <script type="text/javascript">
+        let canvas = document.getElementById('flag');
+        let context = canvas.getContext('2d');
+        context.beginPath();
+        context.rect(0,0,canvas.width,canvas.height);
+        context.closePath();
+        context.fillStyle = '#de2910';
+        context.fill();
+        star(context,12,30,44,50,0); 
+        star(context, 4, 10, 92, 19, 18);
+        star(context, 4, 10, 111, 38, 126);
+        star(context, 4, 10, 111, 68, 72);
+        star(context, 4, 10, 92, 96, 180);
+        waveFlag(canvas, 30, 20, 100, 200, 0.2);
+        //星星
+        function star(ctx,r,R,x,y,rote){
+            context.beginPath();//开始路径 
+            for(var i =0;i<5;i++){
+                //顶点
+                context.lineTo(Math.cos((18 + i * 72 - rote) / 180 * Math.PI) * R + x, -Math.sin((18 + i * 72 - rote) / 180 * Math.PI) * R + y);
+                //凹点
+                context.lineTo(Math.cos((54 + i * 72 - rote) / 180 * Math.PI) * r + x, -Math.sin((54 + i * 72 - rote) / 180 * Math.PI) * r + y);  
+            }
+            context.closePath();
+            context.fillStyle = "#ffde00";
+            context.fill();  
+
+        }
+        function waveFlag(canvas, wavelength, amplitude, period, shading, squeeze) {
+            if (!squeeze) squeeze = 0;//挤压
+            if (!shading) shading = 100;//阴影
+            if (!period) period = 200;//周期
+            if (!amplitude) amplitude = 10;//振幅
+            if (!wavelength) wavelength = canvas.width / 10;
+            let fps = 30;//每秒帧数
+            let ctx = canvas.getContext('2d');
+            let width = canvas.width,height = canvas.height;
+            let od = ctx.getImageData(0, 0, width, height).data;//获取canvas的像素数据数组
+            return setInterval(function() {
+                let id = ctx.getImageData(0, 0, width, height);
+                let d = id.data;
+                let now = (new Date) / period;
+                for (let y = 0; y < height; ++y) {
+                let lastO = 0,
+                shade = 0;
+                let sq = (y - height / 2) * squeeze;
+                for (let x = 0; x < width; ++x) {
+                    let px = (y * width + x) * 4;
+                    let pct = x / width;
+                    let o = Math.sin(x / wavelength - now) * amplitude * pct;
+                    let y2 = y + (o + sq * pct) << 0;
+                    let opx = (y2 * width + x) * 4;
+                    shade = (o - lastO) * shading;
+                    d[px] = od[opx] + shade;
+                    d[px + 1] = od[opx + 1] + shade;
+                    d[px + 2] = od[opx + 2] + shade;
+                    d[px + 3] = od[opx + 3];
+                    lastO = o;
+                }
+            }
+            context.putImageData(id, 0, 0);
+            }, 2000 / fps);
+        }
+
+    </script>
+</body>
+</html>
